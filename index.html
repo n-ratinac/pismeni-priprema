@@ -1,0 +1,78 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+        const generateColorPickers = (colors) => {
+            colors.forEach(element => {
+                $("#color-picker").append(
+                    $(`
+                        <div>
+                        <label for="parni">${element}</label>
+                        <input type="checkbox" name="parni" id="${element}" checked onclick="toggleVisibility(this)">
+                        </div>
+                        `
+                    )
+                )
+            });
+        }
+        
+        const izvuciBoje = (numbersList) => {
+            let boje = numbersList.map(element => element.boja)
+            return [... new Set(boje)]
+        }
+        
+        const toggleVisibility = (checkbox) => {
+            console.log(checkbox)
+            let classTarget = "."+checkbox.getAttribute("id")
+            if (checkbox.checked){
+                $(classTarget).show()
+            }
+            else 
+                $(classTarget).hide()
+        }
+
+        let data;
+        const renderNumbersList = (numbersList) => {
+            numbersList.forEach(element => {
+                $("#numbers-list").append(renderNumber(element))
+            });
+        }
+        const renderNumber = (number) => {
+            $element = $(
+                `<div class=${number.vrednost % 2 === 0 ? "parni" : "neparni"} >${number.vrednost}</div>`)
+            $element.css("color", number.boja);
+            $element.addClass(number.boja);
+            return $element
+        }
+
+        
+        $(document).ready(async () => {
+            const res = await fetch('http://10.0.4.101:3002')
+            data = await res.json()
+            console.log(data)
+
+            renderNumbersList(data);
+            generateColorPickers(izvuciBoje(data));
+        })
+    </script>
+    <title>Fetch primer</title>
+  </head>
+  <body>
+    <label for="parni">Parni</label>
+    <input type="checkbox" name="parni" id="parni" checked onclick="toggleVisibility(this)">
+    <label for="neparni">Neparni</label>
+    <input type="checkbox" name="neparni" id="neparni" checked onclick="toggleVisibility(this)">
+    <div id="color-picker">
+        <!-- Dinamicki renderovane kontrole za odabir zeljene boje -->
+    </div>
+    <div id="numbers-list">
+
+    </div>
+  </body>
+</html>

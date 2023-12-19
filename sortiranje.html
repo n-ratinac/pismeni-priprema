@@ -1,0 +1,67 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <title>Document</title>
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            const sortAscending = () => {
+                $("#comment-list").text("");
+                data.sort((a, b) => a.upvotes - b.upvotes);
+                renderCommentList(data);
+            };
+
+            const sortDescending = () => {
+                $("#comment-list").text("");
+                data.sort((a, b) => b.upvotes - a.upvotes); // ovde je razlika
+                renderCommentList(data);
+            };
+
+            const renderComment = (comment) => {
+                $div = $("<div></div>");
+                $div.text(comment.text);
+                $likes = $(`<p>${comment.upvotes}</p>`);
+                $div.append($likes);
+                return $div;
+            };
+
+            const renderCommentList = (list) => {
+                for (let i = 0; i < list.length; i++) {
+                    const comment = list[i];
+                    $("#comment-list").append(renderComment(comment));
+                }
+            };
+            let data;
+            $(document).ready(async () => {
+                const res = await fetch("http://localhost:3001/comments");
+                data = await res.json();
+                console.log(data);
+                renderCommentList(data);
+            });
+        </script>
+    </head>
+    <body>
+        <label for="ascending">Ascending</label>
+        <input
+            type="radio"
+            name="sort"
+            id="ascending"
+            onclick="sortAscending()"
+        />
+        <label for="descending">Descending</label>
+        <input
+            type="radio"
+            name="sort"
+            id="descending"
+            onclick="sortDescending()"
+        />
+        <div id="comment-list"></div>
+    </body>
+</html>
